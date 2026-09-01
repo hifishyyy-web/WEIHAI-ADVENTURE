@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>웨이하이 가족여행 · 9/17-9/21</title>
+<meta name="description" content="2026년 9월 17일~21일 중국 웨이하이 가족여행 — 준비물, 일자별 동선, 필수코스, 예산을 한 곳에서.">
+<meta name="theme-color" content="#0b2a3d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="웨이하이">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./assets/icon-192.png">
+<link rel="stylesheet" href="./assets/styles.css">
+</head>
+<body>
+
+<div id="splash" class="splash">
+  <div class="splash-in">
+    <div class="splash-mark">威</div>
+    <div class="splash-t">웨이하이 가족여행</div>
+    <div class="splash-s">2026.09.17 – 09.21</div>
+  </div>
+</div>
+
+<header class="appbar">
+  <div class="appbar-in">
+    <div class="brand">
+      <span class="brand-mark">威</span>
+      <span class="brand-txt">
+        <b>웨이하이 가족여행</b>
+        <small id="barSub">9.17 목 – 9.21 월 · 4박 5일</small>
+      </span>
+    </div>
+    <button id="themeBtn" class="icon-btn" type="button" aria-label="테마 전환">◐</button>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ================= HOME ================= -->
+  <section class="view" id="view-home">
+    <div class="hero">
+      <div class="hero-bg" aria-hidden="true">
+        <svg viewBox="0 0 400 200" preserveAspectRatio="none">
+          <path d="M0 130 Q60 108 120 128 T240 126 T400 118 V200 H0Z" opacity=".30"/>
+          <path d="M0 150 Q70 130 140 150 T280 146 T400 140 V200 H0Z" opacity=".45"/>
+          <path d="M0 172 Q80 156 160 172 T320 168 T400 164 V200 H0Z" opacity=".70"/>
+        </svg>
+      </div>
+      <div class="hero-in">
+        <div class="dday" id="dday">D-0</div>
+        <h1>威海<span>Weihai</span></h1>
+        <p class="hero-p">중국 산둥반도 끝, 1,000km 해안선의 도시</p>
+        <div class="hero-chips">
+          <span class="chip">✈️ 인천 직항 1h20m</span>
+          <span class="chip">🕘 한국 -1시간</span>
+          <span class="chip">🛂 30일 무비자</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <div class="card flight-card">
+        <div class="card-h">
+          <h2>✈️ 우리 항공편</h2>
+          <button class="mini-btn" id="flightEdit" type="button">수정</button>
+        </div>
+        <div class="flight-grid" id="flightView"></div>
+        <p class="hint">가족 모두 같은 정보를 보려면 확정된 편명·시각을 입력한 뒤 아래 <b>설정 공유</b>로 링크를 만들어 단톡방에 올리세요.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h2>📅 5일 한눈에</h2></div>
+        <div class="daystrip" id="dayStrip"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h2>🌤️ 9월 중순 날씨</h2></div>
+        <p class="lead" id="wxSummary"></p>
+        <ul class="ul" id="wxPoints"></ul>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h2>📊 준비 현황</h2></div>
+        <div class="progress-wrap">
+          <div class="progress"><i id="prepBar"></i></div>
+          <div class="progress-meta"><span id="prepTxt">0 / 0</span><span id="prepPct">0%</span></div>
+        </div>
+        <button class="btn-line" data-go="prep" type="button">준비물 체크하러 가기 →</button>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h2>🔗 가족과 공유</h2></div>
+        <p class="lead">이 앱은 각자 휴대폰에 저장됩니다. 아래 버튼으로 링크를 복사해 가족 단톡방에 공유하세요.</p>
+        <div class="btn-row">
+          <button class="btn" id="shareBtn" type="button">링크 공유하기</button>
+          <button class="btn-line" id="installBtn" type="button" hidden>홈 화면에 추가</button>
+        </div>
+        <p class="hint">📱 <b>홈 화면 추가 방법</b> — iPhone: Safari 하단 <b>공유</b> → “홈 화면에 추가”. Android: Chrome 우측 상단 <b>⋮</b> → “홈 화면에 추가”. 추가해두면 인터넷이 없어도 열립니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PREP ================= -->
+  <section class="view" id="view-prep" hidden>
+    <div class="wrap">
+      <div class="page-h">
+        <h1>사전 준비물</h1>
+        <p>체크한 내용은 각자 휴대폰에 자동 저장됩니다.</p>
+      </div>
+      <div class="sticky-sum">
+        <div class="progress"><i id="prepBar2"></i></div>
+        <div class="progress-meta"><span id="prepTxt2">0 / 0</span><button class="mini-btn" id="prepReset" type="button">초기화</button></div>
+      </div>
+      <div id="prepList"></div>
+    </div>
+  </section>
+
+  <!-- ================= DAYS ================= -->
+  <section class="view" id="view-days" hidden>
+    <div class="wrap">
+      <div class="page-h">
+        <h1>일자별 동선</h1>
+        <p>4박 5일 · 아래 탭에서 날짜를 고르세요.</p>
+      </div>
+    </div>
+    <div class="daytabs" id="dayTabs"></div>
+    <div class="wrap"><div id="dayBody"></div></div>
+  </section>
+
+  <!-- ================= SPOTS ================= -->
+  <section class="view" id="view-spots" hidden>
+    <div class="wrap">
+      <div class="page-h">
+        <h1>필수 코스</h1>
+        <p>중요도 순. 중국어 이름을 눌러 복사한 뒤 지도 앱이나 기사에게 보여주세요.</p>
+      </div>
+      <div id="spotList"></div>
+
+      <div class="page-h" style="margin-top:28px">
+        <h1>먹거리</h1>
+        <p>웨이하이에서 놓치면 아까운 것들.</p>
+      </div>
+      <div id="foodList"></div>
+    </div>
+  </section>
+
+  <!-- ================= BUDGET ================= -->
+  <section class="view" id="view-budget" hidden>
+    <div class="wrap">
+      <div class="page-h">
+        <h1>예산</h1>
+        <p id="budgetNote"></p>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h2>⚙️ 기준 설정</h2></div>
+        <div class="field-row">
+          <label class="field"><span>환율 (1위안 = ?원)</span><input type="number" id="rateIn" min="100" max="400" step="1"></label>
+          <label class="field"><span>인원 수</span><input type="number" id="paxIn" min="1" max="12" step="1"></label>
+        </div>
+        <div class="seg" id="tierSeg">
+          <button data-tier="min" type="button">알뜰</button>
+          <button data-tier="mid" class="on" type="button">권장</button>
+          <button data-tier="max" type="button">여유</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h2>💰 1인 예상 경비</h2></div>
+        <div id="budgetRows"></div>
+        <div class="total">
+          <div class="total-row"><span>1인 합계</span><b id="perPerson">-</b></div>
+          <div class="total-row big"><span id="paxLabel">전체 합계</span><b id="totalAll">-</b></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h">
+          <h2>🧾 지출 기록</h2>
+          <button class="mini-btn" id="expClear" type="button">전체 삭제</button>
+        </div>
+        <p class="lead">여행 중 쓴 돈을 기록하면 예산 대비 현황이 바로 보입니다.</p>
+        <form class="exp-form" id="expForm">
+          <input type="text" id="expName" placeholder="항목 (예: 류공다오 입장권)" required>
+          <div class="exp-row">
+            <input type="number" id="expAmt" placeholder="금액" min="0" step="0.01" required>
+            <select id="expCur"><option value="CNY">元</option><option value="KRW">원</option></select>
+            <button class="btn" type="submit">추가</button>
+          </div>
+        </form>
+        <div class="spend-sum">
+          <div><small>지출 합계</small><b id="expTotal">¥0</b></div>
+          <div><small>전체 예산 대비</small><b id="expRatio">0%</b></div>
+        </div>
+        <div class="progress"><i id="expBar"></i></div>
+        <div id="expList"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TIPS ================= -->
+  <section class="view" id="view-tips" hidden>
+    <div class="wrap">
+      <div class="page-h">
+        <h1>현지 꿀팁</h1>
+        <p>알고 가면 확실히 편해지는 것들.</p>
+      </div>
+      <div id="tipList"></div>
+
+      <div class="page-h" style="margin-top:28px">
+        <h1>중국어 카드</h1>
+        <p>카드를 누르면 화면 가득 커집니다. 그대로 보여주세요.</p>
+      </div>
+      <div class="seg seg-wrap" id="phraseSeg"></div>
+      <div id="phraseList"></div>
+
+      <div class="page-h" style="margin-top:28px">
+        <h1>비상 연락처</h1>
+        <p>번호를 누르면 바로 전화가 걸립니다.</p>
+      </div>
+      <div id="emgList"></div>
+
+      <div class="card" style="margin-top:18px">
+        <div class="card-h"><h2>⚙️ 설정</h2></div>
+        <div class="btn-row">
+          <button class="btn-line" id="exportBtn" type="button">설정 공유 (링크 복사)</button>
+          <button class="btn-line danger" id="wipeBtn" type="button">내 기록 전체 삭제</button>
+        </div>
+        <p class="hint">항공편·환율·인원 설정을 링크에 담아 가족에게 보낼 수 있습니다. 체크리스트와 지출 기록은 개인별로 유지됩니다.</p>
+      </div>
+
+      <p class="disclaim">요금·운항 정보는 2026년 9월 기준 조사 자료입니다. 입장료와 배편 시간은 계절에 따라 바뀌므로 방문 전날 현지 공식 계정에서 한 번 더 확인하세요.</p>
+    </div>
+  </section>
+
+</main>
+
+<nav class="tabbar">
+  <button class="tab on" data-go="home" type="button"><span>🏠</span>홈</button>
+  <button class="tab" data-go="prep" type="button"><span>🧳</span>준비물</button>
+  <button class="tab" data-go="days" type="button"><span>🗓️</span>일정</button>
+  <button class="tab" data-go="spots" type="button"><span>📍</span>코스</button>
+  <button class="tab" data-go="budget" type="button"><span>💰</span>예산</button>
+  <button class="tab" data-go="tips" type="button"><span>💡</span>꿀팁</button>
+</nav>
+
+<div class="toast" id="toast" hidden></div>
+
+<div class="modal" id="bigCard" hidden>
+  <div class="modal-in">
+    <p class="big-ko" id="bigKo"></p>
+    <p class="big-cn" id="bigCn"></p>
+    <p class="big-py" id="bigPy"></p>
+    <button class="btn" id="bigClose" type="button">닫기</button>
+  </div>
+</div>
+
+<div class="modal" id="flightModal" hidden>
+  <form class="modal-in form" id="flightForm">
+    <h3>항공편 정보 입력</h3>
+    <label class="field"><span>가는 편 — 편명</span><input type="text" id="fOutNo" placeholder="예: KE8871"></label>
+    <label class="field"><span>가는 편 — 인천 출발</span><input type="text" id="fOutDep" placeholder="예: 09:20"></label>
+    <label class="field"><span>가는 편 — 웨이하이 도착</span><input type="text" id="fOutArr" placeholder="예: 10:40"></label>
+    <label class="field"><span>오는 편 — 편명</span><input type="text" id="fRetNo" placeholder="예: KE8872"></label>
+    <label class="field"><span>오는 편 — 웨이하이 출발</span><input type="text" id="fRetDep" placeholder="예: 11:40"></label>
+    <label class="field"><span>오는 편 — 인천 도착</span><input type="text" id="fRetArr" placeholder="예: 14:50"></label>
+    <label class="field"><span>숙소 이름 / 주소</span><input type="text" id="fHotel" placeholder="예: 威海XX酒店 (환추구 …)"></label>
+    <div class="btn-row">
+      <button class="btn" type="submit">저장</button>
+      <button class="btn-line" type="button" id="flightCancel">취소</button>
+    </div>
+  </form>
+</div>
+
+<script type="module" src="./assets/app.js"></script>
+</body>
+</html>
