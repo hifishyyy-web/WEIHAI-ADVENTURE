@@ -34,11 +34,14 @@
 ### GitHub Pages (권장 · 무료)
 
 1. 이 저장소의 **Settings → Pages → Build and deployment → Source** 를 **GitHub Actions** 로 설정
-2. `main` 또는 `claude/**` 브랜치에 푸시하면 `.github/workflows/deploy.yml` 이 자동 배포합니다
-   (작업 브랜치에서도 미리보기가 되도록 열어두었습니다)
+2. `main` 브랜치에 푸시하면 `.github/workflows/deploy.yml` 이 자동 배포합니다
 3. 몇 분 뒤 `https://<사용자명>.github.io/WEIHAI-ADVENTURE/` 로 접속
 
 > 이 앱은 빌드 과정이 없는 정적 파일입니다. 저장소 전체가 그대로 배포됩니다.
+
+> ⚠️ **비공개 저장소 주의** — GitHub Pages 는 무료 플랜에서 **공개 저장소만** 지원합니다.
+> 저장소를 비공개로 유지하려면 아래의 Netlify / Vercel / Cloudflare Pages 를 쓰세요
+> (셋 다 무료 플랜에서 비공개 저장소 배포를 지원합니다).
 
 ### 다른 방법
 
