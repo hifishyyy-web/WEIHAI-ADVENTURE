@@ -2,7 +2,9 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - 'claude/**'          # 머지 전에도 미리보기 배포
   workflow_dispatch:
 
 permissions:

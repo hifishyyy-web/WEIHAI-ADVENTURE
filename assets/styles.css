@@ -94,6 +94,7 @@ button{cursor:pointer;border:0;background:none}
 .card-h h2{font-size:15px;font-weight:700}
 .lead{font-size:13.5px;color:var(--ink2)}
 .hint{font-size:12px;color:var(--ink3);margin-top:10px;line-height:1.6}
+.hint code,.lead code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;background:var(--line2);border-radius:5px;padding:1px 5px;color:var(--ink2)}
 .ul{margin:8px 0 0;padding-left:0;list-style:none}
 .ul li{position:relative;padding-left:15px;font-size:13.2px;color:var(--ink2);margin-bottom:5px}
 .ul li:before{content:"";position:absolute;left:2px;top:9px;width:5px;height:5px;border-radius:50%;background:var(--sea2)}
@@ -232,6 +233,29 @@ button{cursor:pointer;border:0;background:none}
 .spot-acts{display:flex;gap:7px;margin-top:13px;flex-wrap:wrap}
 .spot-acts a,.spot-acts button{flex:1 1 110px;text-align:center;border:1px solid var(--line);border-radius:10px;
   padding:9px;font-size:12.3px;font-weight:600;color:var(--sea);text-decoration:none;background:var(--card)}
+
+/* ---- stay ---- */
+.stay{background:var(--sea3);border-radius:13px;padding:14px;margin-bottom:9px}
+.stay:last-child{margin-bottom:0}
+.stay-name{font-size:15.5px;font-weight:700;line-height:1.4}
+.stay-cn{font-size:13px;color:var(--sea);font-weight:600;margin-top:1px}
+.stay-addr{font-size:13.5px;color:var(--ink);margin-top:7px;line-height:1.55;word-break:break-word}
+.stay-addr-ko{font-size:12px;color:var(--ink2);margin-top:2px;line-height:1.55}
+.stay-meta{font-size:11.8px;color:var(--ink3);margin-top:4px}
+.stay .spot-acts{margin-top:12px}
+.stay .spot-acts a,.stay .spot-acts button{background:var(--card)}
+
+/* ---- restaurants ---- */
+.rest{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:14px;margin-bottom:9px;box-shadow:var(--shadow)}
+.rest-h{display:flex;gap:10px;align-items:flex-start}
+.rest-b{flex:1;min-width:0;display:block}
+.rest-t{font-size:14.6px;font-weight:700;line-height:1.4}
+.rest-t em{font-style:normal;font-size:11.8px;color:var(--ink3);font-weight:500;margin-left:6px}
+.rest-sub{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px}
+.rest-area{font-size:11.3px;color:var(--ink3)}
+.rest-menu{font-size:12.7px;color:var(--ink2);margin-top:9px;line-height:1.6}
+.rest-memo{font-size:11.8px;color:var(--sun);margin-top:4px;line-height:1.55}
 
 /* ---- food ---- */
 .food{display:flex;gap:11px;align-items:flex-start;background:var(--card);border:1px solid var(--line);

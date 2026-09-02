@@ -1,4 +1,4 @@
-import { TRIP, PREP, DAYS, SPOTS, FOOD, BUDGET, PHRASES, TIPS, EMERGENCY } from './data.js';
+import { TRIP, PREP, DAYS, SPOTS, STAY, RESTAURANTS, FOOD, BUDGET, PHRASES, TIPS, EMERGENCY } from './data.js';
 
 /* ================= helpers ================= */
 const $  = (s, r = document) => r.querySelector(s);
@@ -140,12 +140,97 @@ function renderFlight() {
   };
   let html = seg('가는 편', f.outNo, f.outDep, f.outArr, '인천 ICN', '웨이하이 WEH')
            + seg('오는 편', f.retNo, f.retDep, f.retArr, '웨이하이 WEH', '인천 ICN');
-  if (f.hotel) html += `
-    <div class="fl"><span class="fl-dir">숙소</span>
-      <span class="fl-body"><span class="fl-route" style="font-size:13px">${esc(f.hotel)}</span>
-      <span class="fl-meta">택시 기사에게 이 화면을 보여주세요</span></span>
-    </div>`;
   $('#flightView').innerHTML = html;
+}
+
+
+/* ---- 숙소 ---- */
+function renderStay() {
+  const manual = (state.flight.hotel || '').trim();
+
+  if (!STAY.length && !manual) {
+    $('#stayView').innerHTML = `
+      <p class="lead">아직 등록된 숙소가 없습니다.</p>
+      <p class="hint">확정되면 항공편 카드의 <b>수정</b>에서 숙소 이름·주소를 넣거나,
+      <code>assets/data.js</code> 의 <b>STAY</b> 에 채워 넣으세요. 중국어 주소를 함께 넣으면
+      택시 기사에게 화면을 그대로 보여줄 수 있습니다.</p>`;
+    return;
+  }
+
+  const list = STAY.length ? STAY : [{ ko: manual, cn: '', addr: manual }];
+
+  $('#stayView').innerHTML = list.map((h, i) => {
+    const showable = h.addr || h.cn || h.ko;
+    const meta = [
+      h.ci && h.co ? `${h.ci.slice(5).replace('-', '/')} – ${h.co.slice(5).replace('-', '/')}` : '',
+      h.book ? `예약 ${h.book}` : ''
+    ].filter(Boolean).join(' · ');
+    return `
+      <div class="stay">
+        <div class="stay-top">
+          <div class="stay-name">${esc(h.ko || h.cn)}</div>
+          ${h.cn && h.ko ? `<div class="stay-cn">${esc(h.cn)}</div>` : ''}
+        </div>
+        ${h.addr ? `<div class="stay-addr">${esc(h.addr)}</div>` : ''}
+        ${h.addrKo ? `<div class="stay-addr-ko">${esc(h.addrKo)}</div>` : ''}
+        ${meta ? `<div class="stay-meta">${esc(meta)}</div>` : ''}
+        ${h.memo ? `<div class="stay-meta">${esc(h.memo)}</div>` : ''}
+        <div class="spot-acts">
+          <button data-stay="${i}" type="button">기사에게 보여주기</button>
+          <button data-copy="${esc(showable)}" type="button">주소 복사</button>
+          ${h.tel ? `<a href="tel:${esc(h.tel.replace(/[^+\d]/g, ''))}">호텔 전화</a>` : ''}
+          <a href="https://www.amap.com/search?query=${encodeURIComponent(h.cn || h.addr || h.ko)}" target="_blank" rel="noopener">지도에서 열기</a>
+        </div>
+      </div>`;
+  }).join('');
+
+  $$('#stayView [data-stay]').forEach(b => b.addEventListener('click', () => {
+    const h = list[+b.dataset.stay];
+    showBig({ ko: '이 호텔로 가주세요 · 请送我去这家酒店', cn: h.addr || h.cn || h.ko, py: h.ko || '' });
+  }));
+  $$('#stayView [data-copy]').forEach(b =>
+    b.addEventListener('click', () => copy(b.dataset.copy)));
+}
+
+/* ---- 식당 ---- */
+function renderRestaurants(targetSel = '#restList', filterDay = null) {
+  const el = $(targetSel);
+  if (!el) return;
+  const list = filterDay ? RESTAURANTS.filter(r => r.day === filterDay) : RESTAURANTS;
+
+  if (!list.length) {
+    el.innerHTML = filterDay ? '' : `
+      <div class="card">
+        <p class="lead">아직 등록된 식당이 없습니다.</p>
+        <p class="hint">확정되면 <code>assets/data.js</code> 의 <b>RESTAURANTS</b> 에 채워 넣으세요.
+        <b>day</b> 를 지정하면 해당 일차 일정 화면에도 자동으로 함께 표시됩니다.</p>
+      </div>`;
+    return;
+  }
+
+  el.innerHTML = list.map(r => `
+    <div class="rest">
+      <div class="rest-h">
+        <div class="rest-b">
+          <div class="rest-t">${esc(r.ko || r.cn)}${r.cn && r.ko ? `<em>${esc(r.cn)}</em>` : ''}</div>
+          <div class="rest-sub">
+            ${r.day ? `<span class="dayx">Day ${r.day}</span>` : ''}
+            ${r.meal ? `<span class="tagx">${esc(r.meal)}</span>` : ''}
+            ${r.area ? `<span class="rest-area">${esc(r.area)}</span>` : ''}
+          </div>
+        </div>
+        ${r.price ? `<div class="food-p">${esc(r.price)}</div>` : ''}
+      </div>
+      ${r.menu ? `<div class="rest-menu">추천 · ${esc(r.menu)}</div>` : ''}
+      ${r.memo ? `<div class="rest-memo">${esc(r.memo)}</div>` : ''}
+      <div class="spot-acts">
+        <button data-copy="${esc(r.cn || r.ko)}" type="button">상호 복사</button>
+        <a href="https://www.amap.com/search?query=${encodeURIComponent(r.cn || r.ko)}" target="_blank" rel="noopener">지도에서 열기</a>
+      </div>
+    </div>`).join('');
+
+  $$(`${targetSel} [data-copy]`).forEach(b =>
+    b.addEventListener('click', () => copy(b.dataset.copy, `"${b.dataset.copy}" 복사 완료`)));
 }
 
 /* flight modal */
@@ -162,7 +247,7 @@ $('#flightForm').addEventListener('submit', e => {
   state.flight = Object.fromEntries(FF.map(id => [ffKey(id), $('#' + id).value.trim()]));
   store.set('flight', state.flight);
   $('#flightModal').hidden = true;
-  renderFlight();
+  renderFlight(); renderStay();
   toast('저장했습니다');
 });
 
@@ -258,6 +343,13 @@ function renderDay() {
           ${b.spot ? `<button class="tl-link" data-spot="${b.spot}" type="button">코스 상세 보기 →</button>` : ''}
         </article>`).join('')}
     </div>`;
+  const dayRest = RESTAURANTS.filter(r => r.day === d.n);
+  if (dayRest.length) {
+    $('#dayBody').insertAdjacentHTML('beforeend',
+      `<div class="page-h" style="margin-top:22px"><h1 style="font-size:19px">Day ${d.n} 식당</h1></div><div id="dayRestList"></div>`);
+    renderRestaurants('#dayRestList', d.n);
+  }
+
   $$('#dayBody [data-spot]').forEach(b => b.addEventListener('click', () => {
     go('spots');
     setTimeout(() => {
@@ -306,6 +398,8 @@ function renderSpots() {
       e.stopPropagation();
       copy(b.dataset.copy, `"${b.dataset.copy}" 복사 완료`);
     }));
+
+  renderRestaurants();
 
   $('#foodList').innerHTML = FOOD.map(f => `
     <div class="food">
@@ -487,6 +581,7 @@ renderDday();
 renderWeather();
 renderDayStrip();
 renderFlight();
+renderStay();
 renderPrep();
 renderDay();
 renderSpots();
