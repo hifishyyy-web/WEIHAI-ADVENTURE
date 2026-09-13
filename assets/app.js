@@ -1,4 +1,4 @@
-import { TRIP, PREP, DAYS, SPOTS, STAY, RESTAURANTS, FOOD, BUDGET, PHRASES, TIPS, EMERGENCY } from './data.js';
+import { TRIP, CITY, PREP, DAYS, SPOTS, STAY, RESTAURANTS, FOOD, BUDGET, PHRASES, TIPS, EMERGENCY } from './data.js';
 
 /* ================= helpers ================= */
 const $  = (s, r = document) => r.querySelector(s);
@@ -64,19 +64,6 @@ const state = {
   } catch {}
 })();
 
-/* ================= theme ================= */
-(function theme() {
-  const saved = store.get('theme', null);
-  if (saved) document.documentElement.dataset.theme = saved;
-  $('#themeBtn').addEventListener('click', () => {
-    const cur = document.documentElement.dataset.theme
-      || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    const next = cur === 'dark' ? 'light' : 'dark';
-    document.documentElement.dataset.theme = next;
-    store.set('theme', next);
-  });
-})();
-
 /* ================= router ================= */
 const VIEWS = ['home', 'prep', 'days', 'spots', 'budget', 'tips'];
 function go(name, opts = {}) {
@@ -100,6 +87,48 @@ function renderTripLabel() {
   $('#barSub').textContent = label;
   const ds = $('#daysSub');
   if (ds) ds.textContent = `${TRIP.nights}박 ${TRIP.days}일 · 아래 탭에서 날짜를 고르세요.`;
+  const gh = $('#glanceH');
+  if (gh) gh.textContent = `${TRIP.days}일 한눈에`;
+}
+
+function renderCity() {
+  $('#cityIntro').textContent = CITY.intro;
+  $('#cityNote').textContent = CITY.note;
+  $('#cityStats').innerHTML = CITY.stats.map(s => `
+    <div class="stat">
+      <div class="stat-k">${esc(s.k)}</div>
+      <div class="stat-v">${esc(s.v)}</div>
+      <div class="stat-s">${esc(s.sub)}</div>
+    </div>`).join('');
+
+  const m = CITY.map;
+  const pin = p => `
+      <g class="pin${p.island ? ' pin-island' : ''}">
+        <circle cx="${p.x}" cy="${p.y}" r="11"/>
+        <text x="${p.x}" y="${p.y + 4}">${p.n}</text>
+      </g>`;
+  $('#cityMap').innerHTML = `
+    <svg viewBox="${m.viewBox}" role="img" aria-label="웨이하이 행정구역 개념도">
+      <rect class="sea" x="0" y="0" width="400" height="330"/>
+      ${m.districts.map(d => `<path class="dist tone${d.tone}" d="${d.d}"/>`).join('')}
+      ${m.districts.map(d => `
+        <text class="dist-ko" x="${d.label[0]}" y="${d.label[1]}">${esc(d.ko)}</text>
+        <text class="dist-cn" x="${d.label[0]}" y="${d.label[1] + 15}">${esc(d.cn)}</text>`).join('')}
+      ${m.pins.map(pin).join('')}
+      <text class="sea-label" x="60" y="40">${esc(m.sea)}</text>
+    </svg>`;
+
+  $('#mapLegend').innerHTML = `
+    <div class="leg-group">
+      ${m.districts.map(d => `
+        <div class="leg"><span class="swatch tone${d.tone}"></span>
+          <b>${esc(d.ko)}</b><em>${esc(d.cn)}</em><span class="leg-d">${esc(d.desc)}</span></div>`).join('')}
+    </div>
+    <div class="leg-group">
+      ${m.pins.map(p => `
+        <div class="leg"><span class="leg-n">${p.n}</span>
+          <b>${esc(p.ko)}</b><span class="leg-d">${esc(p.tag)}</span></div>`).join('')}
+    </div>`;
 }
 
 function renderDday() {
@@ -279,7 +308,6 @@ function renderPrep() {
   $('#prepList').innerHTML = PREP.map((g, gi) => `
     <section class="grp${gi === 0 ? ' open' : ''}" data-grp="${g.id}">
       <button class="grp-h" type="button">
-        <span class="grp-ic">${g.icon}</span>
         <span class="grp-t"><b>${esc(g.title)}</b><small>${g.items.length}개 항목 · <span class="gcount">0</span>개 완료</small></span>
         <span class="grp-x">▼</span>
       </button>
@@ -520,7 +548,7 @@ function renderExpenses() {
 function renderTips() {
   $('#tipList').innerHTML = TIPS.map(t => `
     <div class="tip">
-      <div class="tip-t"><span>${t.icon}</span>${esc(t.title)}</div>
+      <div class="tip-t">${esc(t.title)}</div>
       <p class="tip-b">${esc(t.body)}</p>
     </div>`).join('');
 
@@ -568,7 +596,7 @@ function shareURL() {
 $('#shareBtn').addEventListener('click', async () => {
   const url = shareURL();
   const md = iso => iso.slice(5).replace('-', '/');
-  const text = `[웨이하이 가족여행 ${md(TRIP.start)}-${md(TRIP.end)}]\n일정·준비물·예산을 여기서 같이 봐요 👇\n${url}`;
+  const text = `[웨이하이 가족여행 ${md(TRIP.start)}-${md(TRIP.end)}]\n일정·준비물·예산을 여기서 같이 봐요\n${url}`;
   if (navigator.share) {
     try { await navigator.share({ title: '웨이하이 가족여행', text: '일정·준비물·예산 한눈에', url }); return; } catch {}
   }
@@ -591,6 +619,7 @@ addEventListener('beforeinstallprompt', e => {
 
 /* ================= boot ================= */
 renderTripLabel();
+renderCity();
 renderDday();
 renderWeather();
 renderDayStrip();

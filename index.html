@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>웨이하이 가족여행 · 9/17-9/20</title>
 <meta name="description" content="2026년 9월 17일~20일 중국 웨이하이 가족여행 — 준비물, 일자별 동선, 필수코스, 예산을 한 곳에서.">
-<meta name="theme-color" content="#0b2a3d">
+<meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="웨이하이">
@@ -34,7 +34,6 @@
         <small id="barSub"></small>
       </span>
     </div>
-    <button id="themeBtn" class="icon-btn" type="button" aria-label="테마 전환">◐</button>
   </div>
 </header>
 
@@ -55,17 +54,32 @@
         <h1>威海<span>Weihai</span></h1>
         <p class="hero-p">중국 산둥반도 끝, 1,000km 해안선의 도시</p>
         <div class="hero-chips">
-          <span class="chip">✈️ 인천 직항 1h20m</span>
-          <span class="chip">🕘 한국 -1시간</span>
-          <span class="chip">🛂 30일 무비자</span>
+          <span class="chip">인천 직항 1h20m</span>
+          <span class="chip">한국 -1시간</span>
+          <span class="chip">30일 무비자</span>
         </div>
       </div>
     </div>
 
     <div class="wrap">
+      <div class="card">
+        <div class="card-h"><h2>웨이하이는 어떤 도시인가</h2></div>
+        <p class="lead" id="cityIntro"></p>
+        <div class="stats" id="cityStats"></div>
+        <p class="hint" id="cityNote"></p>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h2>한눈에 보는 지리</h2></div>
+        <p class="lead">웨이하이는 2개 구(区)와 2개 시(市)로 나뉩니다. 우리 일정이 어디에 흩어져 있는지 보세요.</p>
+        <div class="mapbox" id="cityMap"></div>
+        <div class="maplegend" id="mapLegend"></div>
+        <p class="hint">위치 관계를 잡기 위한 개념도입니다 — 실제 축척 지도가 아닙니다.</p>
+      </div>
+
       <div class="card flight-card">
         <div class="card-h">
-          <h2>✈️ 우리 항공편</h2>
+          <h2>우리 항공편</h2>
           <button class="mini-btn" id="flightEdit" type="button">수정</button>
         </div>
         <div class="flight-grid" id="flightView"></div>
@@ -73,23 +87,23 @@
       </div>
 
       <div class="card">
-        <div class="card-h"><h2>🏨 숙소</h2></div>
+        <div class="card-h"><h2>숙소</h2></div>
         <div id="stayView"></div>
       </div>
 
       <div class="card">
-        <div class="card-h"><h2>📅 5일 한눈에</h2></div>
+        <div class="card-h"><h2 id="glanceH">한눈에 보기</h2></div>
         <div class="daystrip" id="dayStrip"></div>
       </div>
 
       <div class="card">
-        <div class="card-h"><h2>🌤️ 9월 중순 날씨</h2></div>
+        <div class="card-h"><h2>9월 중순 날씨</h2></div>
         <p class="lead" id="wxSummary"></p>
         <ul class="ul" id="wxPoints"></ul>
       </div>
 
       <div class="card">
-        <div class="card-h"><h2>📊 준비 현황</h2></div>
+        <div class="card-h"><h2>준비 현황</h2></div>
         <div class="progress-wrap">
           <div class="progress"><i id="prepBar"></i></div>
           <div class="progress-meta"><span id="prepTxt">0 / 0</span><span id="prepPct">0%</span></div>
@@ -98,13 +112,13 @@
       </div>
 
       <div class="card">
-        <div class="card-h"><h2>🔗 가족과 공유</h2></div>
+        <div class="card-h"><h2>가족과 공유</h2></div>
         <p class="lead">이 앱은 각자 휴대폰에 저장됩니다. 아래 버튼으로 링크를 복사해 가족 단톡방에 공유하세요.</p>
         <div class="btn-row">
           <button class="btn" id="shareBtn" type="button">링크 공유하기</button>
           <button class="btn-line" id="installBtn" type="button" hidden>홈 화면에 추가</button>
         </div>
-        <p class="hint">📱 <b>홈 화면 추가 방법</b> — iPhone: Safari 하단 <b>공유</b> → “홈 화면에 추가”. Android: Chrome 우측 상단 <b>⋮</b> → “홈 화면에 추가”. 추가해두면 인터넷이 없어도 열립니다.</p>
+        <p class="hint"><b>홈 화면 추가 방법</b> — iPhone: Safari 하단 <b>공유</b> → “홈 화면에 추가”. Android: Chrome 우측 상단 <b>⋮</b> → “홈 화면에 추가”. 추가해두면 인터넷이 없어도 열립니다.</p>
       </div>
     </div>
   </section>
@@ -168,7 +182,7 @@
       </div>
 
       <div class="card">
-        <div class="card-h"><h2>⚙️ 기준 설정</h2></div>
+        <div class="card-h"><h2>기준 설정</h2></div>
         <div class="field-row">
           <label class="field"><span>환율 (1위안 = ?원)</span><input type="number" id="rateIn" min="100" max="400" step="1"></label>
           <label class="field"><span>인원 수</span><input type="number" id="paxIn" min="1" max="12" step="1"></label>
@@ -181,7 +195,7 @@
       </div>
 
       <div class="card">
-        <div class="card-h"><h2>💰 1인 예상 경비</h2></div>
+        <div class="card-h"><h2>1인 예상 경비</h2></div>
         <div id="budgetRows"></div>
         <div class="total">
           <div class="total-row"><span>1인 합계</span><b id="perPerson">-</b></div>
@@ -191,7 +205,7 @@
 
       <div class="card">
         <div class="card-h">
-          <h2>🧾 지출 기록</h2>
+          <h2>지출 기록</h2>
           <button class="mini-btn" id="expClear" type="button">전체 삭제</button>
         </div>
         <p class="lead">여행 중 쓴 돈을 기록하면 예산 대비 현황이 바로 보입니다.</p>
@@ -236,7 +250,7 @@
       <div id="emgList"></div>
 
       <div class="card" style="margin-top:18px">
-        <div class="card-h"><h2>⚙️ 설정</h2></div>
+        <div class="card-h"><h2>설정</h2></div>
         <div class="btn-row">
           <button class="btn-line" id="exportBtn" type="button">설정 공유 (링크 복사)</button>
           <button class="btn-line danger" id="wipeBtn" type="button">내 기록 전체 삭제</button>
@@ -251,12 +265,12 @@
 </main>
 
 <nav class="tabbar">
-  <button class="tab on" data-go="home" type="button"><span>🏠</span>홈</button>
-  <button class="tab" data-go="prep" type="button"><span>🧳</span>준비물</button>
-  <button class="tab" data-go="days" type="button"><span>🗓️</span>일정</button>
-  <button class="tab" data-go="spots" type="button"><span>📍</span>코스</button>
-  <button class="tab" data-go="budget" type="button"><span>💰</span>예산</button>
-  <button class="tab" data-go="tips" type="button"><span>💡</span>꿀팁</button>
+  <button class="tab on" data-go="home" type="button">홈</button>
+  <button class="tab" data-go="prep" type="button">준비물</button>
+  <button class="tab" data-go="days" type="button">일정</button>
+  <button class="tab" data-go="spots" type="button">코스</button>
+  <button class="tab" data-go="budget" type="button">예산</button>
+  <button class="tab" data-go="tips" type="button">꿀팁</button>
 </nav>
 
 <div class="toast" id="toast" hidden></div>
