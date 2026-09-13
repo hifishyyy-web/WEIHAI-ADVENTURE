@@ -121,8 +121,7 @@ function renderCity() {
   $('#mapLegend').innerHTML = `
     <div class="leg-group">
       ${m.districts.map(d => `
-        <div class="leg"><span class="swatch tone${d.tone}"></span>
-          <b>${esc(d.ko)}</b><em>${esc(d.cn)}</em><span class="leg-d">${esc(d.desc)}</span></div>`).join('')}
+        <div class="leg"><b>${esc(d.ko)}</b><em>${esc(d.cn)}</em><span class="leg-d">${esc(d.desc)}</span></div>`).join('')}
     </div>
     <div class="leg-group">
       ${m.pins.map(p => `
@@ -141,7 +140,7 @@ function renderDday() {
   else if (today <= end) {
     const n = Math.round((today - start) / 86400000) + 1;
     el.textContent = `여행 ${n}일차 진행 중`;
-  } else               el.textContent = '여행 완료 🎉';
+  } else               el.textContent = '여행 완료';
 }
 
 function renderWeather() {
