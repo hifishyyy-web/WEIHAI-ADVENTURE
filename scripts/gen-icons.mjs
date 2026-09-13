@@ -40,61 +40,30 @@ const png = (w, h, rgba) => {
   ]);
 };
 
-const mix = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t);
-const over = (dst, src, alpha) => dst.map((v, i) => v * (1 - alpha) + src[i] * alpha);
-const clamp01 = v => Math.max(0, Math.min(1, v));
-/* 안티에일리어싱: 부호거리(양수=내부)를 0~1 커버리지로 */
-const cov = d => clamp01(d + 0.5);
-
-const TOP = [11, 42, 61], MID = [15, 95, 135], BOT = [23, 137, 189];
-const SUN = [244, 201, 93], WHITE = [255, 255, 255];
-
-function render(size, { radius, inset }) {
-  const buf = Buffer.alloc(size * size * 4);
-  const S = size, R = radius * S, IN = inset * S, W = S - IN * 2;
-  const sunCX = IN + W * 0.5, sunCY = IN + W * 0.371, sunR = W * 0.1133;
-  const waves = [
-    { y: 0.645, amp: 0.058, a: 0.16 },
-    { y: 0.727, amp: 0.058, a: 0.26 },
-    { y: 0.812, amp: 0.058, a: 0.42 }
-  ];
-  for (let y = 0; y < S; y++) {
-    for (let x = 0; x < S; x++) {
-      const i = (y * S + x) * 4;
-      // 라운드 사각형 마스크(배경 영역)
-      const px = x + 0.5, py = y + 0.5;
-      const qx = Math.max(Math.abs(px - S / 2) - (W / 2 - R), 0);
-      const qy = Math.max(Math.abs(py - S / 2) - (W / 2 - R), 0);
-      const inner = Math.max(Math.abs(px - S / 2) - (W / 2 - R), Math.abs(py - S / 2) - (W / 2 - R));
-      const dist = inner <= 0
-        ? Math.max(Math.abs(px - S / 2) - W / 2, Math.abs(py - S / 2) - W / 2)
-        : Math.hypot(qx, qy) - R;
-      const mask = cov(-dist);
-      if (mask <= 0) { buf[i + 3] = 0; continue; }
-
-      // 세로 그라디언트
-      const t = clamp01((py - IN) / W);
-      let c = t < 0.55 ? mix(TOP, MID, t / 0.55) : mix(MID, BOT, (t - 0.55) / 0.45);
-
-      // 태양
-      const ds = sunR - Math.hypot(px - sunCX, py - sunCY);
-      c = over(c, SUN, cov(ds));
-
-      // 파도(사인파 아래쪽을 흰색 반투명으로)
-      for (const w of waves) {
-        const baseY = IN + W * w.y + Math.sin((px - IN) / W * Math.PI * 2 - 0.6) * (W * w.amp * 0.35);
-        c = over(c, WHITE, cov(py - baseY) * w.a);
-      }
-
-      buf[i] = Math.round(c[0]); buf[i + 1] = Math.round(c[1]);
-      buf[i + 2] = Math.round(c[2]); buf[i + 3] = Math.round(mask * 255);
+// The same typographic W as icon.svg, on a solid white background.
+const points = [[142,174],[185,338],[256,213],[327,338],[370,174]];
+const distanceToSegment = (x,y,a,b) => {
+  const dx=b[0]-a[0], dy=b[1]-a[1];
+  const t=Math.max(0,Math.min(1,((x-a[0])*dx+(y-a[1])*dy)/(dx*dx+dy*dy)));
+  return Math.hypot(x-a[0]-t*dx,y-a[1]-t*dy);
+};
+function render(size) {
+  const buf=Buffer.alloc(size*size*4,255);
+  const scale=size/512;
+  for(let y=0;y<size;y++) for(let x=0;x<size;x++) {
+    let d=Infinity;
+    for(let n=1;n<points.length;n++) {
+      d=Math.min(d,distanceToSegment((x+.5)/scale,(y+.5)/scale,points[n-1],points[n]));
     }
+    const coverage=Math.max(0,Math.min(1,(16-d)*scale+.5));
+    const shade=Math.round(255*(1-coverage));
+    const i=(y*size+x)*4;
+    buf[i]=buf[i+1]=buf[i+2]=shade;
   }
-  return png(S, S, buf);
+  return png(size,size,buf);
 }
-
-writeFileSync('assets/icon-192.png', render(192, { radius: 0.22, inset: 0 }));
-writeFileSync('assets/icon-512.png', render(512, { radius: 0.22, inset: 0 }));
-/* maskable: OS가 자체 마스크를 씌우므로 모서리까지 꽉 채운 정사각형 */
-writeFileSync('assets/icon-maskable.png', render(512, { radius: 0.02, inset: 0.0 }));
-console.log('icons written');
+writeFileSync('assets/icon-192.png',render(192));
+writeFileSync('assets/icon-512.png',render(512));
+// The W remains inside the maskable icon's central safe area.
+writeFileSync('assets/icon-maskable.png',render(512));
+console.log('White icons written');
