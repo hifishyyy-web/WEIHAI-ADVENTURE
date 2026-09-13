@@ -1,14 +1,14 @@
 /* 웨이하이 가족여행 — 오프라인 서비스워커
    버전을 올리면 캐시가 갱신됩니다. */
-const VERSION = 'weihai-white-v2';
+const VERSION = 'weihai-prep-v3';
 const ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
   './manifest.webmanifest?v=white-2',
   './assets/styles.css',
-  './assets/styles.css?v=white-2',
-  './assets/app.js?v=white-2',
+  './assets/styles.css?v=prep-3',
+  './assets/app.js?v=prep-3',
   './assets/app.js',
   './assets/data.js',
   './assets/icon.svg',
