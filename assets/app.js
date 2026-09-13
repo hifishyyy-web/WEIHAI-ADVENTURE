@@ -38,11 +38,17 @@ const won = n => '₩' + Math.round(n).toLocaleString('ko-KR');
 const yuan = n => '¥' + Math.round(n).toLocaleString('ko-KR');
 
 /* ================= state ================= */
+const savedCustomPrep = store.get('customPrep', []);
+const customPrep = Array.isArray(savedCustomPrep) ? savedCustomPrep.filter((item, i, items) =>
+  item && typeof item.id === 'string' && /^custom-[a-zA-Z0-9-]+$/.test(item.id) &&
+  typeof item.t === 'string' && item.t.trim() && items.findIndex(x => x?.id === item.id) === i
+) : [];
 const state = {
   rate:   store.get('rate', TRIP.defaultRate),
   pax:    store.get('pax', 4),
   tier:   store.get('tier', 'mid'),
   prep:   store.get('prep', {}),
+  customPrep,
   exp:    store.get('exp', []),
   flight: store.get('flight', {}),
   day:    1,
@@ -292,9 +298,20 @@ $('#flightForm').addEventListener('submit', e => {
 });
 
 /* ================= PREP ================= */
+// One monochrome symbol is shared by built-in and personally added items.
+const PREP_MARK = `<span class="box" aria-hidden="true">
+  <span class="prep-circle"></span>
+  <svg class="prep-fish" viewBox="0 0 32 24" fill="none" focusable="false">
+    <path d="M9 12C13 5 23 5 29 12C23 19 13 19 9 12ZM9 12L3 7V17L9 12Z"/>
+    <path d="M21 8C19 10 19 14 21 16"/>
+    <circle cx="24" cy="11" r="1" class="fish-eye"/>
+  </svg>
+</span>`;
+let deletedPrep = null;
 function prepStats() {
-  const total = PREP.reduce((a, g) => a + g.items.length, 0);
-  const done = Object.values(state.prep).filter(Boolean).length;
+  const ids = [...PREP.flatMap(g => g.items.map((_, i) => `${g.id}-${i}`)), ...state.customPrep.map(it => it.id)];
+  const total = ids.length;
+  const done = ids.filter(id => state.prep[id]).length;
   return { total, done, pct: total ? Math.round(done / total * 100) : 0 };
 }
 function renderPrepBars() {
@@ -302,36 +319,41 @@ function renderPrepBars() {
   ['#prepBar', '#prepBar2'].forEach(s => { const e = $(s); if (e) e.style.width = pct + '%'; });
   ['#prepTxt', '#prepTxt2'].forEach(s => { const e = $(s); if (e) e.textContent = `${done} / ${total} 완료`; });
   $('#prepPct').textContent = pct + '%';
+  $('#customPrepCount').textContent = `${state.customPrep.filter(it => state.prep[it.id]).length} / ${state.customPrep.length} 완료`;
+}
+function prepLabel(id, item) {
+  return `<label class="chk">
+    <input type="checkbox" data-k="${esc(id)}" aria-labelledby="prep-title-${esc(id)}"${state.prep[id] ? ' checked' : ''}>
+    ${PREP_MARK}
+    <span class="chk-t"><b id="prep-title-${esc(id)}">${esc(item.t)}</b>${item.d ? `<small>${esc(item.d)}</small>` : ''}<span class="prep-done" aria-hidden="true">준비 완료</span></span>
+  </label>`;
+}
+function renderCustomPrep() {
+  $('#customPrepList').innerHTML = state.customPrep.map(it => `<div class="custom-prep-row">
+    ${prepLabel(it.id, it)}
+    <button class="prep-remove" type="button" data-remove-prep="${esc(it.id)}" aria-label="${esc(it.t)} 삭제" title="준비물 삭제">×</button>
+  </div>`).join('');
+  $('#customPrepEmpty').hidden = state.customPrep.length > 0;
+  $('#customPrepUndo').hidden = !deletedPrep;
+  renderPrepBars();
 }
 function renderPrep() {
   $('#prepList').innerHTML = PREP.map((g, gi) => `
     <section class="grp${gi === 0 ? ' open' : ''}" data-grp="${g.id}">
-      <button class="grp-h" type="button">
+      <button class="grp-h" type="button" aria-expanded="${gi === 0}">
         <span class="grp-t"><b>${esc(g.title)}</b><small>${g.items.length}개 항목 · <span class="gcount">0</span>개 완료</small></span>
-        <span class="grp-x">▼</span>
+        <span class="grp-x" aria-hidden="true">▼</span>
       </button>
       <div class="grp-body">
         ${g.note ? `<p class="grp-note">${esc(g.note)}</p>` : ''}
-        ${g.items.map((it, i) => {
-          const id = `${g.id}-${i}`;
-          return `<label class="chk">
-            <input type="checkbox" data-k="${id}"${state.prep[id] ? ' checked' : ''}>
-            <span class="box"></span>
-            <span class="chk-t"><b>${esc(it.t)}</b>${it.d ? `<small>${esc(it.d)}</small>` : ''}</span>
-          </label>`;
-        }).join('')}
+        ${g.items.map((it, i) => prepLabel(`${g.id}-${i}`, it)).join('')}
       </div>
     </section>`).join('');
-
-  $$('#prepList .grp-h').forEach(h =>
-    h.addEventListener('click', () => h.parentElement.classList.toggle('open')));
-  $$('#prepList input[type=checkbox]').forEach(c =>
-    c.addEventListener('change', () => {
-      state.prep[c.dataset.k] = c.checked;
-      store.set('prep', state.prep);
-      renderPrepBars(); renderGroupCounts();
-    }));
-  renderGroupCounts(); renderPrepBars();
+  $$('#prepList .grp-h').forEach(h => h.addEventListener('click', () => {
+    const open = h.parentElement.classList.toggle('open');
+    h.setAttribute('aria-expanded', String(open));
+  }));
+  renderGroupCounts(); renderCustomPrep();
 }
 function renderGroupCounts() {
   PREP.forEach(g => {
@@ -340,9 +362,57 @@ function renderGroupCounts() {
     if (el) el.textContent = n;
   });
 }
+$('#view-prep').addEventListener('change', e => {
+  const c = e.target;
+  if (!c.matches('input[type="checkbox"][data-k]')) return;
+  state.prep[c.dataset.k] = c.checked;
+  store.set('prep', state.prep);
+  renderPrepBars(); renderGroupCounts();
+  const title = c.closest('.chk').querySelector('.chk-t b').textContent;
+  $('#prepFeedback').textContent = `${title}: ${c.checked ? '준비 완료' : '아직 준비 중'}`;
+});
+$('#customPrepForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const input = $('#customPrepInput');
+  const t = input.value.trim();
+  if (!t) { input.value = ''; input.focus(); return; }
+  const uid = globalThis.crypto?.randomUUID?.() || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+  state.customPrep.unshift({ id: `custom-${uid}`, t });
+  store.set('customPrep', state.customPrep);
+  input.value = '';
+  renderCustomPrep();
+  $('#prepFeedback').textContent = `${t} 추가했습니다.`;
+  input.focus();
+});
+$('#customPrepList').addEventListener('click', e => {
+  const button = e.target.closest('[data-remove-prep]');
+  if (!button) return;
+  const index = state.customPrep.findIndex(it => it.id === button.dataset.removePrep);
+  if (index < 0) return;
+  const [item] = state.customPrep.splice(index, 1);
+  deletedPrep = { item, index, checked: !!state.prep[item.id] };
+  delete state.prep[item.id];
+  store.set('customPrep', state.customPrep); store.set('prep', state.prep);
+  renderCustomPrep();
+  $('#prepFeedback').textContent = `${item.t} 삭제했습니다. 삭제 취소로 되돌릴 수 있습니다.`;
+  $('#customPrepUndoBtn').focus();
+});
+$('#customPrepUndoBtn').addEventListener('click', () => {
+  if (!deletedPrep) return;
+  const { item, index, checked } = deletedPrep;
+  state.customPrep.splice(index, 0, item);
+  state.prep[item.id] = checked;
+  deletedPrep = null;
+  store.set('customPrep', state.customPrep); store.set('prep', state.prep);
+  renderCustomPrep();
+  $('#prepFeedback').textContent = `${item.t} 복원했습니다.`;
+  $(`#customPrepList input[data-k="${item.id}"]`).focus();
+});
 $('#prepReset').addEventListener('click', () => {
-  if (!confirm('준비물 체크를 모두 지울까요?')) return;
-  state.prep = {}; store.set('prep', state.prep); renderPrep(); toast('초기화했습니다');
+  if (!confirm('준비 완료 표시를 모두 해제할까요? 직접 추가한 준비물은 그대로 남습니다.')) return;
+  state.prep = {}; store.set('prep', state.prep);
+  if (deletedPrep) deletedPrep.checked = false;
+  renderPrep(); toast('완료 표시를 초기화했습니다');
 });
 
 /* ================= DAYS ================= */
@@ -604,7 +674,7 @@ $('#shareBtn').addEventListener('click', async () => {
 $('#exportBtn').addEventListener('click', () => copy(shareURL(), '설정이 담긴 링크를 복사했습니다'));
 $('#wipeBtn').addEventListener('click', () => {
   if (!confirm('이 기기에 저장된 체크리스트·지출·설정을 모두 지울까요?')) return;
-  ['prep', 'exp', 'flight', 'rate', 'pax', 'tier', 'theme'].forEach(store.del);
+  ['prep', 'customPrep', 'exp', 'flight', 'rate', 'pax', 'tier', 'theme'].forEach(store.del);
   location.reload();
 });
 
