@@ -14,7 +14,7 @@
 <link rel="manifest" href="./manifest.webmanifest?v=white-2">
 <link rel="icon" href="./assets/icon.svg?v=white-2" type="image/svg+xml">
 <link rel="apple-touch-icon" href="./assets/icon-192.png?v=white-2">
-<link rel="stylesheet" href="./assets/styles.css?v=white-2">
+<link rel="stylesheet" href="./assets/styles.css?v=prep-3">
 </head>
 <body>
 
@@ -122,12 +122,27 @@
     <div class="wrap">
       <div class="page-h">
         <h1>사전 준비물</h1>
-        <p>체크한 내용은 각자 휴대폰에 자동 저장됩니다.</p>
+        <p>추가한 준비물과 체크 상태는 이 기기에 자동 저장됩니다.</p>
       </div>
       <div class="sticky-sum">
         <div class="progress"><i id="prepBar2"></i></div>
         <div class="progress-meta"><span id="prepTxt2">0 / 0</span><button class="mini-btn" id="prepReset" type="button">초기화</button></div>
       </div>
+      <section class="card custom-prep" aria-labelledby="customPrepHeading">
+        <div class="card-h"><h2 id="customPrepHeading">내가 추가한 준비물</h2><span class="custom-count" id="customPrepCount">0개</span></div>
+        <form id="customPrepForm" class="prep-add-form">
+          <label class="sr-only" for="customPrepInput">새 준비물</label>
+          <input id="customPrepInput" type="text" placeholder="생각난 준비물을 적어보세요" maxlength="120" required autocomplete="off" enterkeyhint="done">
+          <button class="btn" type="submit">추가</button>
+        </form>
+        <p class="hint prep-help">동그라미를 누르면 생선으로 바뀌며 준비 완료!</p>
+        <div id="customPrepList"></div>
+        <p class="empty" id="customPrepEmpty">예: 충전 케이블, 낚시 모자, 상비약</p>
+        <div class="prep-undo" id="customPrepUndo" hidden>
+          <span>준비물을 삭제했습니다.</span><button class="mini-btn" id="customPrepUndoBtn" type="button">삭제 취소</button>
+        </div>
+      </section>
+      <p id="prepFeedback" class="sr-only" role="status" aria-live="polite"></p>
       <div id="prepList"></div>
     </div>
   </section>
@@ -295,6 +310,6 @@
   </form>
 </div>
 
-<script type="module" src="./assets/app.js?v=white-2"></script>
+<script type="module" src="./assets/app.js?v=prep-3"></script>
 </body>
 </html>
