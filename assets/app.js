@@ -90,6 +90,18 @@ $$('[data-go]').forEach(b => b.addEventListener('click', () => go(b.dataset.go))
 addEventListener('hashchange', () => go(location.hash.slice(1)));
 
 /* ================= HOME ================= */
+function renderTripLabel() {
+  const DOW = ['일', '월', '화', '수', '목', '금', '토'];
+  const f = iso => {
+    const d = new Date(iso + 'T00:00:00');
+    return `${d.getMonth() + 1}.${d.getDate()} ${DOW[d.getDay()]}`;
+  };
+  const label = `${f(TRIP.start)} – ${f(TRIP.end)} · ${TRIP.nights}박 ${TRIP.days}일`;
+  $('#barSub').textContent = label;
+  const ds = $('#daysSub');
+  if (ds) ds.textContent = `${TRIP.nights}박 ${TRIP.days}일 · 아래 탭에서 날짜를 고르세요.`;
+}
+
 function renderDday() {
   const start = new Date(TRIP.start + 'T00:00:00');
   const today = new Date(); today.setHours(0, 0, 0, 0);
@@ -555,7 +567,8 @@ function shareURL() {
 }
 $('#shareBtn').addEventListener('click', async () => {
   const url = shareURL();
-  const text = `[웨이하이 가족여행 9/17-9/21]\n일정·준비물·예산을 여기서 같이 봐요 👇\n${url}`;
+  const md = iso => iso.slice(5).replace('-', '/');
+  const text = `[웨이하이 가족여행 ${md(TRIP.start)}-${md(TRIP.end)}]\n일정·준비물·예산을 여기서 같이 봐요 👇\n${url}`;
   if (navigator.share) {
     try { await navigator.share({ title: '웨이하이 가족여행', text: '일정·준비물·예산 한눈에', url }); return; } catch {}
   }
@@ -577,6 +590,7 @@ addEventListener('beforeinstallprompt', e => {
 });
 
 /* ================= boot ================= */
+renderTripLabel();
 renderDday();
 renderWeather();
 renderDayStrip();
