@@ -201,6 +201,7 @@ button{cursor:pointer;border:0;background:none}
 .tl-tag[data-t="식사"]{background:color-mix(in srgb,var(--sun) 18%,transparent);color:var(--sun)}
 .tl-tag[data-t="이동"]{background:color-mix(in srgb,var(--ink3) 18%,transparent);color:var(--ink2)}
 .tl-tag[data-t="쇼핑"],.tl-tag[data-t="드라이브"]{background:color-mix(in srgb,var(--gold) 20%,transparent);color:var(--gold)}
+.tl-tag[data-t="온천"]{background:color-mix(in srgb,var(--ok) 20%,transparent);color:var(--ok)}
 .tl-cost{margin-left:auto;font-size:11px;font-weight:600;color:var(--gold);font-variant-numeric:tabular-nums}
 .tlx h3{font-size:14.5px;font-weight:700}
 .tlx p{font-size:12.8px;color:var(--ink2);margin-top:4px;line-height:1.62}
